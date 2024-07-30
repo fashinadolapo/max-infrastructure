@@ -19,7 +19,7 @@ jobs:
         pip install aws-cdk.aws-eks
         pip install aws-cdk.aws-elasticloadbalancingv2
         pip install aws-cdk.aws-iam
-
+        npm install -g aws-cdk
     - name: Deploy to AWS
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
