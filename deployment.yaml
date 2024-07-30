@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: max-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: max-app
+  template:
+    metadata:
+      labels:
+        app: max-app
+    spec:
+      containers:
+      - name: max-container
+        image: fashinadolapo/max-python-app:latest
+        ports:
+        - containerPort: 80
