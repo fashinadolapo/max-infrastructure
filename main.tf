@@ -28,18 +28,32 @@ module "vpc" {
 
 }
 
+# Output the required values
+output "public_subnets" {
+  value = module.vpc.public_subnets
+}
+
+output "private_subnets" {
+  value = module.vpc.private_subnets
+}
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+
 module "eks-cluster" {
   source                        = "terraform-aws-modules/eks/aws"
   version                       = "17.1.0"
   cluster_name                  = var.cluster_name
   cluster_version               = "1.21"
-  subnets                       = flatten([module.vpc.outputs.public_subnets, module.vpc.outputs.private_subnets])
+  subnets                       = flatten([module.vpc.public_subnets, module.vpc.private_subnets])
   cluster_delete_timeout        = "30m"
   cluster_iam_role_name         = var.cluster-iam-name
   cluster_enabled_log_types     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days = 7
 
- vpc_id = module.vpc.outputs.vpc_id
+ vpc_id = module.vpc.vpc_id
 
   fargate_pod_execution_role_name = var.fargate_role_name
   
@@ -57,7 +71,7 @@ fargate_profiles = {
           namespace = var.namespace
         }
       ]
-      subnets = flatten([module.vpc.outputs.private_subnets])
+      subnets = flatten([module.vpc.private_subnets])
     }
   }
 
@@ -67,14 +81,7 @@ resource "aws_eks_addon" "coredns" {
   addon_name        = "coredns"
   addon_version     = "v1.8.4-eksbuild.1"
   cluster_name      = "eks-serve"
-  resolve_conflicts = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
   depends_on        = [module.eks-cluster]
 }
-
-
-
-
-
-
-
-
