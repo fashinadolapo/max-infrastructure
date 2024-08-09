@@ -10,6 +10,6 @@ terraform {
 
 provider "aws" {
   profile    = "default"
-  #region     = var.region
+  region     = var.region
   token      = var.token
 }
